@@ -1,5 +1,7 @@
 FROM ubuntu:xenial
 
+RUN apt-get install -y software-properties-common
+
 ENV LLVM=5.0
 RUN . /etc/lsb-release && add-apt-repository "deb http://apt.llvm.org/\$DISTRIB_CODENAME/ llvm-toolchain-\$DISTRIB_CODENAME-$LLVM main" -y
 RUN apt-key adv --fetch-keys http://apt.llvm.org/llvm-snapshot.gpg.key
@@ -32,7 +34,6 @@ RUN apt-get update && apt-get install -y \
       python-tornado \
       python-virtualenv \
       python-zmq \
-      software-properties-common \
       python-sphinx \
       \
       clang-$LLVM \
