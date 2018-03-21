@@ -79,15 +79,15 @@ RUN cmake $SRC/triqs -DCMAKE_INSTALL_PREFIX=$INSTALL -DBuild_Documentation=1 -DC
 USER root
 RUN make install
 
-COPY . $SRC/dft_tools
+COPY dft_tools $SRC/dft_tools
 WORKDIR $BUILD/dft_tools
 RUN chown build .
 USER build
-RUN cmake ${SRC}/dft_tools -DTRIQS_ROOT=$INSTALL -DBuild_Documentation=1 && make -j2
+RUN cmake $SRC/dft_tools -DTRIQS_ROOT=$INSTALL -DBuild_Documentation=1 && make -j2
 USER root
 RUN make install
 
-COPY . $SRC/cthyb
+COPY cthyb $SRC/cthyb
 WORKDIR $BUILD/cthyb
 RUN chown build .
 USER build
