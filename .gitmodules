@@ -1,0 +1,15 @@
+[submodule "triqs"]
+	path = triqs
+	url = https://github.com/TRIQS/triqs
+	branch = unstable
+[submodule "dft_tools"]
+	path = dft_tools
+	url = https://github.com/TRIQS/dft_tools
+	branch = unstable
+[submodule "cthyb"]
+	path = cthyb
+	url = https://github.com/TRIQS/cthyb
+	branch = unstable
+[submodule "cpp2py"]
+	path = cpp2py
+	url = https://github.com/TRIQS/cpp2py
