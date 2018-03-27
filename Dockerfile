@@ -103,8 +103,8 @@ RUN make install
 
 WORKDIR /
 RUN rm -rf $SRC $BUILD && userdel build
-ENV NB_USER=triqs NB_UID=1000 HOME=/home/${NB_USER}
-RUN useradd -u $NB_UID -d $HOME -m $NB_USER && \
+ARG NB_USER=triqs NB_UID=1000
+RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $NB_USER
-WORKDIR $HOME
+WORKDIR /home/$NB_USER
