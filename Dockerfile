@@ -40,7 +40,12 @@ RUN apt-get update && \
       python-clang-$LLVM \
       \
       libnfft3-dev \
+      \
+      sudo \
+      python-pip \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir notebook==5.* ipython==5.*
 
 ENV CC=clang-$LLVM CXX=clang++-$LLVM
 
@@ -55,47 +60,46 @@ RUN mkdir /tmp/build && cd /tmp/build && \
       rm -rf /tmp/libcxx* /tmp/build
 ENV CXXFLAGS="-stdlib=libc++ -DBOOST_NO_AUTO_PTR=1" LD_LIBRARY_PATH=/usr/lib/llvm-$LLVM/lib
 
-RUN useradd -m build
+RUN useradd -u 1000 -m triqs && echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 ENV SRC=/src \
-    BUILD=/home/build \
+    BUILD=/home/triqs/build \
     INSTALL=/usr/local \
     PYTHONPATH=/usr/local/lib/python2.7/site-packages \
     CMAKE_PREFIX_PATH=/usr/local/share/cmake
 
 COPY cpp2py $SRC/cpp2py
 WORKDIR $BUILD/cpp2py
-RUN chown build .
-USER build
+RUN chown triqs .
+USER triqs
 RUN cmake $SRC/cpp2py -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2
 USER root
 RUN make install
 
 COPY triqs $SRC/triqs
 WORKDIR $BUILD/triqs
-RUN chown build .
-USER build
+RUN chown triqs .
+USER triqs
 RUN cmake $SRC/triqs -DCMAKE_INSTALL_PREFIX=$INSTALL -DBuild_Documentation=1 -DCPP2RST_INCLUDE_DIRS=--includes=/usr/lib/llvm-$LLVM/include/c++/v1 -DMATHJAX_PATH="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2" && make -j2
 USER root
 RUN make install
 
 COPY dft_tools $SRC/dft_tools
 WORKDIR $BUILD/dft_tools
-RUN chown build .
-USER build
+RUN chown triqs .
+USER triqs
 RUN cmake $SRC/dft_tools -DTRIQS_ROOT=$INSTALL -DBuild_Documentation=1 && make -j2
 USER root
 RUN make install
 
 COPY cthyb $SRC/cthyb
 WORKDIR $BUILD/cthyb
-RUN chown build .
-USER build
+RUN chown triqs .
+USER triqs
 RUN cmake $SRC/cthyb -DTRIQS_ROOT=$INSTALL && make -j2
 USER root
 RUN make install
 
-RUN useradd -m triqs
 WORKDIR /home/triqs
 RUN rm -rf $SRC $BUILD
 USER triqs
