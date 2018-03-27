@@ -65,6 +65,7 @@ ENV SRC=/src \
     INSTALL=/usr/local \
     PYTHONPATH=/usr/local/lib/python2.7/site-packages \
     CMAKE_PREFIX_PATH=/usr/local/share/cmake
+ARG BUILD_DOC=0
 
 RUN useradd -d $BUILD -m build
 
@@ -80,7 +81,7 @@ COPY triqs $SRC/triqs
 WORKDIR $BUILD/triqs
 RUN chown build .
 USER build
-RUN cmake $SRC/triqs -DCMAKE_INSTALL_PREFIX=$INSTALL -DBuild_Documentation=1 -DCPP2RST_INCLUDE_DIRS=--includes=/usr/lib/llvm-$LLVM/include/c++/v1 -DMATHJAX_PATH="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2" && make -j2
+RUN cmake $SRC/triqs -DCMAKE_INSTALL_PREFIX=$INSTALL -DBuild_Documentation=$BUILD_DOC -DCPP2RST_INCLUDE_DIRS=--includes=/usr/lib/llvm-$LLVM/include/c++/v1 -DMATHJAX_PATH="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2" && make -j2
 USER root
 RUN make install
 
@@ -88,7 +89,7 @@ COPY dft_tools $SRC/dft_tools
 WORKDIR $BUILD/dft_tools
 RUN chown build .
 USER build
-RUN cmake $SRC/dft_tools -DTRIQS_ROOT=$INSTALL -DBuild_Documentation=1 && make -j2
+RUN cmake $SRC/dft_tools -DTRIQS_ROOT=$INSTALL -DBuild_Documentation=$BUILD_DOC && make -j2
 USER root
 RUN make install
 
