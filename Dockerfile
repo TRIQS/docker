@@ -60,46 +60,50 @@ RUN mkdir /tmp/build && cd /tmp/build && \
       rm -rf /tmp/libcxx* /tmp/build
 ENV CXXFLAGS="-stdlib=libc++ -DBOOST_NO_AUTO_PTR=1" LD_LIBRARY_PATH=/usr/lib/llvm-$LLVM/lib
 
-RUN useradd -u 1000 -m triqs && echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
 ENV SRC=/src \
-    BUILD=/home/triqs/build \
+    BUILD=/home/build \
     INSTALL=/usr/local \
     PYTHONPATH=/usr/local/lib/python2.7/site-packages \
     CMAKE_PREFIX_PATH=/usr/local/share/cmake
 
+RUN useradd -d $BUILD -m build
+
 COPY cpp2py $SRC/cpp2py
 WORKDIR $BUILD/cpp2py
-RUN chown triqs .
-USER triqs
+RUN chown build .
+USER build
 RUN cmake $SRC/cpp2py -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2
 USER root
 RUN make install
 
 COPY triqs $SRC/triqs
 WORKDIR $BUILD/triqs
-RUN chown triqs .
-USER triqs
+RUN chown build .
+USER build
 RUN cmake $SRC/triqs -DCMAKE_INSTALL_PREFIX=$INSTALL -DBuild_Documentation=1 -DCPP2RST_INCLUDE_DIRS=--includes=/usr/lib/llvm-$LLVM/include/c++/v1 -DMATHJAX_PATH="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2" && make -j2
 USER root
 RUN make install
 
 COPY dft_tools $SRC/dft_tools
 WORKDIR $BUILD/dft_tools
-RUN chown triqs .
-USER triqs
+RUN chown build .
+USER build
 RUN cmake $SRC/dft_tools -DTRIQS_ROOT=$INSTALL -DBuild_Documentation=1 && make -j2
 USER root
 RUN make install
 
 COPY cthyb $SRC/cthyb
 WORKDIR $BUILD/cthyb
-RUN chown triqs .
-USER triqs
+RUN chown build .
+USER build
 RUN cmake $SRC/cthyb -DTRIQS_ROOT=$INSTALL && make -j2
 USER root
 RUN make install
 
-WORKDIR /home/triqs
-RUN rm -rf $SRC $BUILD
-USER triqs
+WORKDIR /
+RUN rm -rf $SRC $BUILD && userdel build
+ENV NB_USER=triqs NB_UID=1000 HOME=/home/${NB_USER}
+RUN useradd -u $NB_UID -d $HOME -m $NB_USER && \
+    echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER $NB_USER
+WORKDIR $HOME
