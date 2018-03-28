@@ -13,6 +13,3 @@
 [submodule "cpp2py"]
 	path = cpp2py
 	url = https://github.com/TRIQS/cpp2py
-[submodule "tutorials"]
-	path = tutorials
-	url = https://github.com/TRIQS/tutorials
