@@ -107,5 +107,6 @@ ARG NB_USER=triqs
 ARG NB_UID=1000
 RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+COPY tutorials/TRIQSTutorialsPython /home/$NB_USER/tutorials
 USER $NB_USER
 WORKDIR /home/$NB_USER
