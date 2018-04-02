@@ -109,4 +109,7 @@ RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $NB_USER
 WORKDIR /home/$NB_USER
-RUN git clone --branch unstable https://github.com/TRIQS/tutorials
+RUN git clone --depth 1 --branch unstable https://github.com/TRIQS/tutorials
+
+EXPOSE 8888
+CMD ["jupyter","notebook"]
