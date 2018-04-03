@@ -112,4 +112,4 @@ WORKDIR /home/$NB_USER
 RUN git clone --depth 1 --branch unstable https://github.com/TRIQS/tutorials
 
 EXPOSE 8888
-CMD ["jupyter","notebook"]
+CMD ["jupyter","notebook","--ip","0.0.0.0"]
