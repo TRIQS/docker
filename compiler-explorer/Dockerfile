@@ -11,9 +11,10 @@ RUN apt-get install -y \
 	nodejs
 
 EXPOSE 10240
+ADD https://github.com/mattgodbolt/compiler-explorer/archive/master.tar.gz /tmp/compiler-explorer.tar.gz
+RUN chown triqs /tmp/compiler-explorer.tar.gz
 USER triqs
-ADD --chown=triqs https://github.com/mattgodbolt/compiler-explorer/archive/master.tar.gz compiler-explorer.tar.gz
-RUN tar xzf compiler-explorer.tar.gz --one-top-level --strip-components=1 && rm compiler-explorer.tar.gz
+RUN tar xzf /tmp/compiler-explorer.tar.gz --one-top-level --strip-components=1 && rm /tmp/compiler-explorer.tar.gz
 WORKDIR compiler-explorer
 RUN make dist
 COPY c++.local.properties etc/config

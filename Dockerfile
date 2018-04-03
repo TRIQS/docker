@@ -110,10 +110,11 @@ ARG NB_USER=triqs
 ARG NB_UID=1000
 RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+ADD https://github.com/TRIQS/tutorials/archive/unstable.tar.gz /tmp/tutorials.tar.gz
+RUN chown $NB_USER /tmp/tutorials.tar.gz
 USER $NB_USER
 WORKDIR /home/$NB_USER
-ADD --chown=1000 https://github.com/TRIQS/tutorials/archive/unstable.tar.gz tutorials.tar.gz
-RUN tar xzf tutorials.tar.gz --one-top-level --strip-components=1 && rm tutorials.tar.gz
+RUN tar xzf /tmp/tutorials.tar.gz --one-top-level --strip-components=1 && rm /tmp/tutorials.tar.gz
 
 EXPOSE 8888
 CMD ["jupyter","notebook","--ip","0.0.0.0"]
