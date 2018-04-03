@@ -2,3 +2,4 @@
 .gitmodules
 README.md
 */Jenkinsfile
+compiler-explorer

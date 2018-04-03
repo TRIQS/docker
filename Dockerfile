@@ -43,7 +43,10 @@ RUN apt-get update && \
       \
       sudo \
       python-pip \
-    && rm -rf /var/lib/apt/lists/*
+      && \
+    apt-get autoremove --purge -y && \
+    apt-get autoclean -y && \
+    rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir notebook==5.* ipython==5.*
 
@@ -109,7 +112,8 @@ RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $NB_USER
 WORKDIR /home/$NB_USER
-RUN git clone --depth 1 --branch unstable https://github.com/TRIQS/tutorials
+ADD --chown=1000 https://github.com/TRIQS/tutorials/archive/unstable.tar.gz tutorials.tar.gz
+RUN tar xzf tutorials.tar.gz --one-top-level --strip-components=1 && rm tutorials.tar.gz
 
 EXPOSE 8888
 CMD ["jupyter","notebook","--ip","0.0.0.0"]
