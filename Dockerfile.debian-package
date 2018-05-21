@@ -1,0 +1,61 @@
+FROM ubuntu:xenial
+
+RUN apt-get update && apt-get install -y \
+      cmake \
+      g++ \
+      gfortran \
+      git \
+      hdf5-tools \
+      libblas-dev \
+      libboost-all-dev \
+      libfftw3-dev \
+      libgfortran3 \
+      libgmp-dev \
+      libhdf5-serial-dev \
+      liblapack-dev \
+      libopenmpi-dev \
+      openmpi-bin \
+      openmpi-common \
+      openmpi-doc \
+      python-dev \
+      python-h5py \
+      python-jinja2 \
+      python-mako \
+      python-matplotlib \
+      python-mpi4py \
+      python-numpy \
+      python-scipy \
+      python-tornado \
+      python-virtualenv \
+      python-zmq \
+      software-properties-common \
+      \
+      libnfft3-dev \
+      && \
+   add-apt-repository ppa:ubuntu-toolchain-r/test && \
+   apt-get update && apt-get install -y g++-7 && \
+   apt-get autoremove --purge -y && \
+   apt-get autoclean -y && \
+   rm -rf /var/cache/apt/* /var/lib/apt/lists/*
+
+ENV CC=gcc-7 CXX=g++-7 \
+    SRC=/src \
+    BUILD=/home/build \
+    INSTALL=/usr \
+    CMAKE_PREFIX_PATH=/usr/share/cmake
+
+WORKDIR $BUILD/cpp2py
+COPY cpp2py $SRC/cpp2py
+RUN cmake $SRC/cpp2py -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i cpp2py-*.deb
+
+WORKDIR $BUILD/triqs
+COPY triqs $SRC/triqs
+RUN cmake $SRC/triqs -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i triqs-*.deb
+
+WORKDIR $BUILD/dft_tools
+COPY dft_tools $SRC/dft_tools
+RUN cmake $SRC/dft_tools -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i dft_tools-*.deb
+
+WORKDIR $BUILD/cthyb
+COPY cthyb $SRC/cthyb
+RUN cmake $SRC/cthyb -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i cthyb-*.deb
