@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y \
       python-virtualenv \
       python-zmq \
       software-properties-common \
+      dpkg-dev \
       \
       libnfft3-dev \
       && \
@@ -59,3 +60,8 @@ RUN cmake $SRC/dft_tools -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTAL
 WORKDIR $BUILD/cthyb
 COPY cthyb $SRC/cthyb
 RUN cmake $SRC/cthyb -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i cthyb-*.deb
+
+WORKDIR $BUILD/repo
+RUN mv ../*/*.deb . \
+  && dpkg-scanpackages . > Packages \
+  && gzip -k Packages
