@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
       python-zmq \
       software-properties-common \
       dpkg-dev \
+      dpkg-sig \
       \
       libnfft3-dev \
       && \
@@ -62,6 +63,12 @@ COPY cthyb $SRC/cthyb
 RUN cmake $SRC/cthyb -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i cthyb-*.deb
 
 WORKDIR $BUILD/repo
-RUN mv ../*/*.deb . \
-  && dpkg-scanpackages . > Packages \
-  && gzip -k Packages
+COPY secret.gpg public.gpg ./
+RUN gpg --import -v -v secret.gpg public.gpg \
+  && rm secret.gpg \
+  && mv ../*/*.deb . \
+  && dpkg-sig -s builder *.deb \
+  && apt-ftparchive packages . > Packages \
+  && gzip -k Packages && bzip2 -k Packages \
+  && apt-ftparchive release . > Release \
+  && gpg --yes -abs -o Release.gpg Release
