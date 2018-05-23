@@ -10,5 +10,5 @@ node('docker') {
     }
     sh "docker rmi --no-prune ${img.imageName()}"
     archiveArtifacts(artifacts: 'debrepo.tgz')
-  }
+  } }
 }
