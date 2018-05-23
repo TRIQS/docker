@@ -44,7 +44,8 @@ ENV CC=gcc-7 CXX=g++-7 \
     SRC=/src \
     BUILD=/home/build \
     INSTALL=/usr \
-    CMAKE_PREFIX_PATH=/usr/share/cmake
+    CMAKE_PREFIX_PATH=/usr/share/cmake \
+    REPO=/home/build/repo
 
 WORKDIR $BUILD/cpp2py
 COPY cpp2py $SRC/cpp2py
@@ -62,7 +63,7 @@ WORKDIR $BUILD/cthyb
 COPY cthyb $SRC/cthyb
 RUN cmake $SRC/cthyb -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i cthyb-*.deb
 
-WORKDIR $BUILD/repo
+WORKDIR $REPO
 COPY secret.gpg public.gpg ./
 RUN gpg --import -v -v secret.gpg public.gpg \
   && rm secret.gpg \
