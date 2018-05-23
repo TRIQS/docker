@@ -49,19 +49,19 @@ ENV CC=gcc-7 CXX=g++-7 \
 
 WORKDIR $BUILD/cpp2py
 COPY cpp2py $SRC/cpp2py
-RUN cmake $SRC/cpp2py -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i cpp2py-*.deb
+RUN cmake $SRC/cpp2py -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i cpp2py-*.deb
 
 WORKDIR $BUILD/triqs
 COPY triqs $SRC/triqs
-RUN cmake $SRC/triqs -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i triqs-*.deb
+RUN cmake $SRC/triqs -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i triqs-*.deb
 
 WORKDIR $BUILD/dft_tools
 COPY dft_tools $SRC/dft_tools
-RUN cmake $SRC/dft_tools -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i dft_tools-*.deb
+RUN cmake $SRC/dft_tools -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i dft_tools-*.deb
 
 WORKDIR $BUILD/cthyb
 COPY cthyb $SRC/cthyb
-RUN cmake $SRC/cthyb -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j8 package && dpkg -i cthyb-*.deb
+RUN cmake $SRC/cthyb -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i cthyb-*.deb
 
 WORKDIR $REPO
 COPY secret.gpg public.gpg ./
