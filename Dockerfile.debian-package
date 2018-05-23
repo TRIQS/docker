@@ -71,5 +71,6 @@ RUN gpg --import -v -v secret.gpg public.gpg \
   && dpkg-sig -s builder *.deb \
   && apt-ftparchive packages . > Packages \
   && gzip -k Packages && bzip2 -k Packages \
-  && apt-ftparchive release . > Release \
-  && gpg --yes -abs -o Release.gpg Release
+  && apt-ftparchive release . > release && mv release Release \
+  && gpg --digest-algo SHA512 --clearsign -o InRelease Release \
+  && gpg --digest-algo SHA512 -abs -o Release.gpg Release
