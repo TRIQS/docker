@@ -1,12 +1,6 @@
 properties([
   disableConcurrentBuilds(),
-  buildDiscarder(logRotator(numToKeepStr: '10', daysToKeepStr: '30')),
-  pipelineTriggers([
-    upstream(
-      threshold: 'SUCCESS',
-      upstreamProjects: triqsProject
-    )
-  ])
+  buildDiscarder(logRotator(numToKeepStr: '10', daysToKeepStr: '30'))
 ])
 
 node('docker') {
