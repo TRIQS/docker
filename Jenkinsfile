@@ -1,3 +1,14 @@
+properties([
+  disableConcurrentBuilds(),
+  buildDiscarder(logRotator(numToKeepStr: '10', daysToKeepStr: '30')),
+  pipelineTriggers([
+    upstream(
+      threshold: 'SUCCESS',
+      upstreamProjects: triqsProject
+    )
+  ])
+])
+
 node('docker') {
   stage("debian-package") { timeout(time: 1, unit: 'HOURS') {
     checkout scm
