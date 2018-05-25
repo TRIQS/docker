@@ -76,7 +76,7 @@ COPY cpp2py $SRC/cpp2py
 WORKDIR $BUILD/cpp2py
 RUN chown build .
 USER build
-RUN cmake $SRC/cpp2py -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2
+RUN cmake $SRC/cpp2py -DCMAKE_INSTALL_PREFIX=$INSTALL -DLIBCLANG_CXX_FLAGS='-I/usr/lib/llvm-$LLVM/include/c++/v1' && make -j2
 USER root
 RUN make install
 
