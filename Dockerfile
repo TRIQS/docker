@@ -114,7 +114,7 @@ ADD https://github.com/TRIQS/tutorials/archive/unstable.tar.gz /tmp/tutorials.ta
 RUN chown $NB_USER /tmp/tutorials.tar.gz
 USER $NB_USER
 WORKDIR /home/$NB_USER
-ENV CPATH=/usr/include/openmpi:$CPATH
+ENV CPATH=/usr/include/openmpi:/usr/include/hdf5/serial:$CPATH
 RUN tar xzf /tmp/tutorials.tar.gz --one-top-level --strip-components=1 && rm /tmp/tutorials.tar.gz
 
 EXPOSE 8888
