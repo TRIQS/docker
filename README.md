@@ -2,10 +2,10 @@
 
 This builds the [flatironinstitute/triqs](https://hub.docker.com/r/flatironinstitute/triqs) docker hub images which include triqs and applications.
 
-It can be used to run a Jupyter notebook environment yourself or on [Binder](https://mybinder.org/v2/gh/TRIQS/docker/unstable), or to run a shell for development:
+It can be used to run a Jupyter notebook environment yourself or on [Binder](https://mybinder.org/v2/gh/TRIQS/docker/master), or to run a shell for development:
 
-  docker run --rm flatironinstitute/triqs:unstable
-  docker run --rm it flatironinstitute/triqs:unstable bash
+  docker run --rm flatironinstitute/triqs:master
+  docker run --rm it flatironinstitute/triqs:master bash
 
 A separate [docker build](compiler-explorer) provides the [compiler-explorer](https://github.com/mattgodbolt/compiler-explorer) with triqs enabled, running on port 10240.
 

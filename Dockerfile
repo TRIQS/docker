@@ -110,7 +110,7 @@ ARG NB_USER=triqs
 ARG NB_UID=1000
 RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-ADD https://github.com/TRIQS/tutorials/archive/unstable.tar.gz /tmp/tutorials.tar.gz
+ADD https://github.com/TRIQS/tutorials/archive/master.tar.gz /tmp/tutorials.tar.gz
 RUN chown $NB_USER /tmp/tutorials.tar.gz
 USER $NB_USER
 WORKDIR /home/$NB_USER

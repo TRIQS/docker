@@ -1,4 +1,4 @@
-FROM flatironinstitute/triqs:unstable
+FROM flatironinstitute/triqs:master
 
 USER root
 
