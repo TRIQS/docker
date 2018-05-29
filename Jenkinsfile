@@ -3,17 +3,25 @@ properties([
   buildDiscarder(logRotator(numToKeepStr: '10', daysToKeepStr: '30'))
 ])
 
-node('docker') {
-  stage("debian-package") { timeout(time: 1, unit: 'HOURS') {
-    checkout scm
-    withCredentials([file(credentialsId: 'gpg-sign-key', variable: 'SECRET')]) {
-      sh 'cp $SECRET secret.gpg'
-    }
-    def img = docker.build("flatironinstitute/triqs-debian-package:${env.BRANCH_NAME}", "-f Dockerfile.debian-package .")
-    img.inside {
-      sh 'tar czf debrepo.tgz -C $REPO .'
-    }
-    sh "docker rmi --no-prune ${img.imageName()}"
-    archiveArtifacts(artifacts: 'debrepo.tgz')
+def platforms = [:]
+
+def packagePlatforms = ["xenial", "bionic"]
+for (int i = 0; i < packagePlatforms.size(); i++) {
+  def platform = packagePlatforms[i]
+  platforms["package-$platform"] = { -> node('docker') {
+    stage("package-$platform") { timeout(time: 1, unit: 'HOURS') {
+      checkout scm
+      withCredentials([file(credentialsId: 'gpg-sign-key', variable: 'SECRET')]) {
+	sh 'cp $SECRET secret.gpg'
+      }
+      def img = docker.build("flatironinstitute/triqs-package-$platform:${env.BRANCH_NAME}", "-f Dockerfile.package-$platform .")
+      img.inside {
+	sh "tar czf $platform.tgz -C \$REPO ."
+      }
+      sh "docker rmi --no-prune ${img.imageName()}"
+      archiveArtifacts(artifacts: "$platform.tgz")
+    } }
   } }
 }
+
+parallel platforms
