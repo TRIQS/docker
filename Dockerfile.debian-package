@@ -47,6 +47,9 @@ ENV CC=gcc-7 CXX=g++-7 \
     CMAKE_PREFIX_PATH=/usr/share/cmake \
     REPO=/home/build/repo
 
+# For verison detection
+COPY .git $SRC/.git
+
 WORKDIR $BUILD/cpp2py
 COPY cpp2py $SRC/cpp2py
 RUN cmake $SRC/cpp2py -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i cpp2py-*.deb
