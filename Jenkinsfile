@@ -16,10 +16,10 @@ for (int i = 0; i < packagePlatforms.size(); i++) {
       }
       def img = docker.build("flatironinstitute/triqs-package-$platform:${env.BRANCH_NAME}", "-f Dockerfile.package-$platform .")
       img.inside {
-	sh "tar czf $platform.tgz -C \$REPO ."
+	sh "tar czf ${platform}.tgz -C \$REPO ."
       }
       sh "docker rmi --no-prune ${img.imageName()}"
-      archiveArtifacts(artifacts: "$platform.tgz")
+      archiveArtifacts(artifacts: "${platform}.tgz")
     } }
   } }
 }
