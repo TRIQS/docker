@@ -42,32 +42,27 @@ RUN apt-get update && apt-get install -y \
 
 ENV CC=gcc-7 CXX=g++-7 \
     SRC=/src \
-    BUILD=/home/build \
+    BUILD=/build \
     INSTALL=/usr \
     CMAKE_PREFIX_PATH=/usr/share/cmake \
-    REPO=/home/build/repo
+    REPO=/build/repo
 
-WORKDIR $BUILD/cpp2py
-COPY cpp2py $SRC/cpp2py
-RUN cmake $SRC/cpp2py -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i cpp2py-*.deb
-
-WORKDIR $BUILD/triqs
-COPY triqs $SRC/triqs
-RUN cmake $SRC/triqs -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i triqs-*.deb
-
-WORKDIR $BUILD/dft_tools
-COPY dft_tools $SRC/dft_tools
-RUN cmake $SRC/dft_tools -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i dft_tools-*.deb
-
-WORKDIR $BUILD/cthyb
-COPY cthyb $SRC/cthyb
-RUN cmake $SRC/cthyb -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j2 package && dpkg -i cthyb-*.deb
+COPY . $SRC/
+RUN set -ex ; \
+  mkdir -p $REPO ; \
+  for pkg in cpp2py triqs dft_tools cthyb ; do \
+    mkdir $BUILD/$pkg ; \
+    cd $BUILD/$pkg ; \
+    cmake $SRC/$pkg -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+    make -j2 package ; \
+    dpkg -i $pkg-*.deb ; \
+    mv $pkg-*.deb $REPO ; \
+  done
 
 WORKDIR $REPO
 COPY secret.gpg public.gpg ./
 RUN gpg --import -v -v secret.gpg public.gpg \
   && rm secret.gpg \
-  && mv ../*/*.deb . \
   && dpkg-sig -s builder *.deb \
   && apt-ftparchive packages . > Packages \
   && gzip -k Packages && bzip2 -k Packages \
