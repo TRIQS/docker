@@ -31,10 +31,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       python-tornado \
       python-virtualenv \
       python-zmq \
-      software-properties-common \
+      \
+      apt-utils \
+      debhelper \
       dpkg-dev \
       dpkg-sig \
-      debhelper \
       \
       libnfft3-dev
 
