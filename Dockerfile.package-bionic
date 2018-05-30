@@ -41,6 +41,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       libnfft3-dev
 
 ENV CC=clang CXX=clang++ \
+    CXXFLAGS="-stdlib=libc++"
+    LDFLAGS="-stdlib=libc++"
     SRC=/src \
     BUILD=/build \
     INSTALL=/usr \
