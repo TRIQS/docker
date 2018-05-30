@@ -10,6 +10,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       libblas-dev \
       libboost-all-dev \
       libc++-dev \
+      libc++abi-dev \
       libclang-dev \
       libfftw3-dev \
       libgfortran3 \
