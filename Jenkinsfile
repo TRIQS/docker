@@ -11,6 +11,7 @@ for (int i = 0; i < packagePlatforms.size(); i++) {
   platforms["package-$platform"] = { -> node('docker') {
     stage("package-$platform") { timeout(time: 1, unit: 'HOURS') {
       checkout scm
+      sh 'git submodule foreach git fetch --tags'
       withCredentials([file(credentialsId: 'gpg-sign-key', variable: 'SECRET')]) {
 	sh 'cp $SECRET secret.gpg'
       }
