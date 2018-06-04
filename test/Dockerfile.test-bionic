@@ -1,0 +1,42 @@
+FROM ubuntu:bionic
+ENV LLVM=5.0
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update &&  apt-get install -y \
+      software-properties-common \
+      apt-transport-https \
+      clang \
+      cmake \
+      curl \
+      g++ \
+      gfortran \
+      git \
+      sudo \
+      hdf5-tools \
+      libblas-dev \
+      libboost-all-dev \
+      libclang-dev \
+      libfftw3-dev \
+      libgfortran3 \
+      libgmp-dev \
+      libhdf5-dev \
+      liblapack-dev \
+      libopenmpi-dev \
+      libnfft3-dev
+
+# Install triqs from repository
+RUN curl -L https://users.flatironinstitute.org/~ccq/triqs/unstable/bionic/public.gpg | apt-key add -
+RUN add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs/unstable/bionic/ /"
+RUN apt-get update && apt-get install -y triqs dft_tools cthyb
+
+# Create user and setup environment
+ARG NB_USER=triqs
+ARG NB_UID=1000
+RUN useradd -u $NB_UID -m $NB_USER && \
+    echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER $NB_USER
+WORKDIR /home/$NB_USER
+
+ENV CC=clang CXX=clang++ \
+    CPATH=/usr/include/openmpi:/usr/include/hdf5/serial/:$CPATH \
+    CMAKE_PREFIX_PATH=/usr/share/cmake

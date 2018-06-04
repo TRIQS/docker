@@ -1,0 +1,69 @@
+FROM ubuntu:xenial
+
+RUN apt-get update && apt-get install -y \
+      cmake \
+      g++ \
+      gfortran \
+      git \
+      hdf5-tools \
+      libblas-dev \
+      libboost-all-dev \
+      libfftw3-dev \
+      libgfortran3 \
+      libgmp-dev \
+      libhdf5-serial-dev \
+      liblapack-dev \
+      libopenmpi-dev \
+      openmpi-bin \
+      openmpi-common \
+      openmpi-doc \
+      python-dev \
+      python-h5py \
+      python-jinja2 \
+      python-mako \
+      python-matplotlib \
+      python-mpi4py \
+      python-numpy \
+      python-scipy \
+      python-tornado \
+      python-virtualenv \
+      python-zmq \
+      software-properties-common \
+      dpkg-dev \
+      dpkg-sig \
+      debhelper \
+      \
+      libnfft3-dev \
+      && \
+   add-apt-repository ppa:ubuntu-toolchain-r/test && \
+   apt-get update && apt-get install -y g++-7
+
+ENV CC=gcc-7 CXX=g++-7 \
+    SRC=/src \
+    BUILD=/build \
+    INSTALL=/usr \
+    CMAKE_PREFIX_PATH=/usr/share/cmake \
+    REPO=/build/repo
+
+COPY . $SRC/
+RUN set -ex ; \
+  mkdir -p $REPO ; \
+  for pkg in cpp2py triqs dft_tools cthyb ; do \
+    mkdir $BUILD/$pkg ; \
+    cd $BUILD/$pkg ; \
+    cmake $SRC/$pkg -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+    make -j2 package ; \
+    dpkg -i $pkg-*.deb ; \
+    mv $pkg-*.deb $REPO ; \
+  done
+
+WORKDIR $REPO
+COPY secret.gpg public.gpg ./
+RUN gpg --import -v -v secret.gpg public.gpg \
+  && rm secret.gpg \
+  && dpkg-sig -s builder *.deb \
+  && apt-ftparchive packages . > Packages \
+  && gzip -k Packages && bzip2 -k Packages \
+  && apt-ftparchive release . > release && mv release Release \
+  && gpg --digest-algo SHA512 --clearsign -o InRelease Release \
+  && gpg --digest-algo SHA512 -abs -o Release.gpg Release
