@@ -9,7 +9,7 @@ It can be used to run a Jupyter notebook environment yourself or on [Binder](htt
   `docker run --rm -ti flatironinstitute/triqs bash`
 
 The Jupyter notebook will be accessible at [http://localhost:8888](http://localhost:8888), where you should pass the token provided on the command line.
-If you would the state of the virtual machine to be stored, drop `--rm` from the commands above.
+If you want the state of the virtual machine to be stored, drop `--rm` from the commands above.
 A summary of useful docker commands can be found [here](https://www.docker.com/sites/default/files/Docker_CheatSheet_08.09.2016_0.pdf).
 
 A separate [docker build](https://hub.docker.com/r/flatironinstitute/compiler-explorer) provides the [compiler-explorer](https://github.com/mattgodbolt/compiler-explorer) with triqs enabled, running on port 10240.
