@@ -14,9 +14,6 @@ RUN apt-get update && apt-get install -y \
       libhdf5-serial-dev \
       liblapack-dev \
       libopenmpi-dev \
-      openmpi-bin \
-      openmpi-common \
-      openmpi-doc \
       python-dev \
       python-h5py \
       python-jinja2 \
