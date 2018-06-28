@@ -50,7 +50,7 @@ USER $NB_USER
 WORKDIR /home/$NB_USER
 ENV CMAKE_PREFIX_PATH=/usr/share/cmake \
     CPATH=/usr/include/openmpi:/usr/include/hdf5/serial:$CPATH
-RUN curl -L https://github.com/TRIQS/tutorials/archive/unstable.tar.gz | tar xzf - --one-top-level --strip-components=1
+RUN curl -L https://github.com/TRIQS/tutorials/archive/unstable.tar.gz | tar xzf - --one-top-level=tutorials --strip-components=1
 
 EXPOSE 8888
 CMD ["jupyter","notebook","--ip","0.0.0.0"]
