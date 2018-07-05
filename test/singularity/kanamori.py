@@ -1,4 +1,8 @@
 import numpy as np
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 from pytriqs.gf import *
 from pytriqs.operators.util.hamiltonians import h_int_kanamori
 from pytriqs.operators.util.op_struct import set_operator_structure
@@ -48,7 +52,7 @@ p["random_seed"] = 123 * mpi.rank + 567
 p["length_cycle"] = 50
 p["n_warmup_cycles"] = 50
 p["n_cycles"] = 50000
-p["measure_g_l"] = True
+p["measure_G_l"] = True
 p["move_double"] = False
 
 S.solve(h_int=H, **p)

@@ -14,15 +14,15 @@ RUN yum -y install \
       wget
 
 WORKDIR /tmp
-RUN wget https://github.com/singularityware/singularity/releases/download/2.5.1/singularity-2.5.1.tar.gz
-RUN tar -xvf singularity-2.5.1.tar.gz
-WORKDIR singularity-2.5.1
+RUN wget https://github.com/singularityware/singularity/releases/download/2.5.2/singularity-2.5.2.tar.gz
+RUN tar -xvf singularity-2.5.2.tar.gz
+WORKDIR singularity-2.5.2
 RUN ./autogen.sh
 RUN ./configure --prefix=/usr/local --sysconfdir=/etc
 RUN make
 RUN make install
 WORKDIR /tmp
-RUN rm -rf singularity-2.5.1
+RUN rm -rf singularity-2.5.2
 
 RUN wget https://download.open-mpi.org/release/open-mpi/v2.1/openmpi-2.1.1.tar.gz
 RUN tar -xvf openmpi-2.1.1.tar.gz
@@ -41,5 +41,5 @@ COPY kanamori.py /home/$NB_USER/kanamori.py
 WORKDIR /home/$NB_USER
 USER $NB_USER
 
-RUN singularity pull docker://wentzell/triqsall_bionic
-CMD mpirun -np 2 singularity exec triqsall_bionic.simg python kanamori.py
+RUN singularity pull docker://flatironinstitute/triqs:unstable
+CMD mpirun -np 2 singularity exec triqs-unstable.simg python kanamori.py
