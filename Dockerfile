@@ -31,6 +31,7 @@ RUN apt-get update && \
       libnfft3-dev \
       \
       sudo \
+      openssh-client \
       python-pip \
       python-setuptools \
       python-configparser \
