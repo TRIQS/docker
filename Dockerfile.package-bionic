@@ -1,7 +1,6 @@
 FROM ubuntu:bionic
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      clang \
       cmake \
       g++ \
       gfortran \
@@ -34,7 +33,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       \
       libnfft3-dev
 
-ENV CC=clang CXX=clang++ \
+ENV CC=gcc CXX=g++ \
     SRC=/src \
     BUILD=/build \
     INSTALL=/usr \
