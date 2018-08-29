@@ -8,14 +8,19 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 message( STATUS "-------- BUILD-TYPE: ${CMAKE_BUILD_TYPE} --------")
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
+
 # Global options and definitions
 add_compile_options(
 	-std=c++17
 	$<$<CONFIG:Debug>:-Og>
 	)
 
+# Load Dependencies
+find_package(Cpp2Py)
+find_package(TRIQS)
+
 # Load Triqs specific test macros in the proper way
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 macro(add_all_subdirectories_with_cmakelist)
   SET(print_decal_sub_dir "${print_decal_sub_dir}  ")
   FILE(GLOB ALLSUBS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} */CMakeLists.txt)
@@ -25,9 +30,11 @@ macro(add_all_subdirectories_with_cmakelist)
   endforeach(f ${ALLSUBS}) 
 endmacro()
 
-# Load Dependencies
-find_package(Cpp2Py)
-find_package(TRIQS)
+set(MPIEXEC_EXECUTABLE		${TRIQS_MPIEXEC_EXECUTABLE} 	CACHE STRING "")
+set(MPIEXEC_NUMPROC_FLAG	${TRIQS_MPIEXEC_NUMPROC_FLAG} 	CACHE STRING "")
+set(MPIEXEC_PREFLAGS		${TRIQS_MPIEXEC_PREFLAGS} 	CACHE STRING "")
+set(MPIEXEC_POSTFLAGS		${TRIQS_MPIEXEC_POSTFLAGS} 	CACHE STRING "")
+
 link_libraries(triqs)
 
 enable_testing()
