@@ -16,7 +16,14 @@ for (int i = 0; i < packagePlatforms.size(); i++) {
 	sh 'cp $SECRET secret.gpg'
       }
       def img = docker.build("flatironinstitute/triqs-package-$platform:${env.BRANCH_NAME}", "-f Dockerfile.package-$platform .")
-      img.inside {
+      img.inside('-v /etc/passwd:/etc/passwd -v /etc/group:/etc/group') {
+	sh """#!/bin/bash -ex
+	  mkdir test/triqs/run
+	  cd test/triqs/run
+	  cmake ..
+	  make -j2
+	  make test
+	"""
 	sh "tar czf ${platform}.tgz -C \$REPO ."
       }
       sh "docker rmi --no-prune ${img.imageName()}"
