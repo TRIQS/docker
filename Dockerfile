@@ -48,7 +48,7 @@ RUN apt-get update && \
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir notebook==5.* ipython==5.*
+RUN pip install --no-cache-dir notebook==5.* ipython==5.* ipykernel==4.*
 
 ENV CC=clang-$LLVM CXX=clang++-$LLVM
 
