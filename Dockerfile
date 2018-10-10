@@ -1,5 +1,5 @@
 FROM ubuntu:xenial
-ENV LLVM=5.0
+ENV LLVM=6.0
 
 RUN apt-get update && \
     apt-get install -y software-properties-common && \
@@ -52,14 +52,14 @@ RUN pip install --no-cache-dir notebook==5.* ipython==5.* ipykernel==4.*
 
 ENV CC=clang-$LLVM CXX=clang++-$LLVM
 
-ADD http://releases.llvm.org/5.0.1/libcxx-5.0.1.src.tar.xz /tmp/
-ADD http://releases.llvm.org/5.0.1/libcxxabi-5.0.1.src.tar.xz /tmp/
+ADD http://releases.llvm.org/6.0.1/libcxx-6.0.1.src.tar.xz /tmp/
+ADD http://releases.llvm.org/6.0.1/libcxxabi-6.0.1.src.tar.xz /tmp/
 RUN mkdir /tmp/build && cd /tmp/build && \
-      tar -C /tmp -xf /tmp/libcxx-5.0.1.src.tar.xz && \
-      tar -C /tmp -xf /tmp/libcxxabi-5.0.1.src.tar.xz && \
-      cmake /tmp/libcxxabi-5.0.1.src -DLLVM_CONFIG_PATH=/usr/bin/llvm-config-$LLVM -DCMAKE_INSTALL_PREFIX=/usr/lib/llvm-$LLVM -DLIBCXXABI_LIBCXX_PATH=/tmp/libcxx-5.0.1.src && make -j2 && make install && \
+      tar -C /tmp -xf /tmp/libcxx-6.0.1.src.tar.xz && \
+      tar -C /tmp -xf /tmp/libcxxabi-6.0.1.src.tar.xz && \
+      cmake /tmp/libcxxabi-6.0.1.src -DLLVM_CONFIG_PATH=/usr/bin/llvm-config-$LLVM -DCMAKE_INSTALL_PREFIX=/usr/lib/llvm-$LLVM -DLIBCXXABI_LIBCXX_PATH=/tmp/libcxx-6.0.1.src && make -j2 && make install && \
       rm -rf * && \
-      cmake /tmp/libcxx-5.0.1.src -DLLVM_CONFIG_PATH=/usr/bin/llvm-config-$LLVM -DCMAKE_INSTALL_PREFIX=/usr/lib/llvm-$LLVM -DLIBCXX_CXX_ABI=libcxxabi -DLIBCXX_CXX_ABI_INCLUDE_PATHS=/tmp/libcxxabi-5.0.1.src/include && make -j2 install && \
+      cmake /tmp/libcxx-6.0.1.src -DLLVM_CONFIG_PATH=/usr/bin/llvm-config-$LLVM -DCMAKE_INSTALL_PREFIX=/usr/lib/llvm-$LLVM -DLIBCXX_CXX_ABI=libcxxabi -DLIBCXX_CXX_ABI_INCLUDE_PATHS=/tmp/libcxxabi-6.0.1.src/include && make -j2 install && \
       rm -rf /tmp/libcxx* /tmp/build
 ENV CXXFLAGS="-stdlib=libc++" LD_LIBRARY_PATH=/usr/lib/llvm-$LLVM/lib
 
