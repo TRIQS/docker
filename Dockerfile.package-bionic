@@ -1,7 +1,6 @@
 FROM ubuntu:bionic
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      clang \
       cmake \
       g++ \
       gfortran \
@@ -16,9 +15,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       libhdf5-dev \
       liblapack-dev \
       libopenmpi-dev \
-      openmpi-bin \
-      openmpi-common \
-      openmpi-doc \
       python-dev \
       python-h5py \
       python-jinja2 \
@@ -28,7 +24,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       python-numpy \
       python-scipy \
       python-tornado \
-      python-virtualenv \
       python-zmq \
       \
       apt-utils \
@@ -38,7 +33,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       \
       libnfft3-dev
 
-ENV CC=clang CXX=clang++ \
+ENV CC=gcc CXX=g++ \
     SRC=/src \
     BUILD=/build \
     INSTALL=/usr \

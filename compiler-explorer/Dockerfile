@@ -11,7 +11,7 @@ RUN apt-get install -y \
 	nodejs
 
 EXPOSE 10240
-ADD https://github.com/mattgodbolt/compiler-explorer/archive/master.tar.gz /tmp/compiler-explorer.tar.gz
+ADD https://api.github.com/repos/mattgodbolt/compiler-explorer/tarball/master /tmp/compiler-explorer.tar.gz
 RUN chown triqs /tmp/compiler-explorer.tar.gz
 USER triqs
 RUN tar xzf /tmp/compiler-explorer.tar.gz --one-top-level --strip-components=1 && rm /tmp/compiler-explorer.tar.gz
