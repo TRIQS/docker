@@ -35,6 +35,7 @@ RUN apt-get update && \
       python-pip \
       python-setuptools \
       python-configparser \
+      python-tk \
       python-backports-shutil-get-terminal-size \
       && \
     apt-get autoremove --purge -y && \
