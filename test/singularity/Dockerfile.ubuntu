@@ -1,0 +1,42 @@
+FROM docker_base:latest
+
+RUN sudo apt-get update && sudo apt-get install -y \
+      build-essential \
+      libssl-dev \
+      uuid-dev \
+      libgpgme11-dev \
+      squashfs-tools \
+      libopenmpi-dev \
+      openssh-client
+
+# -- Install Go
+WORKDIR /tmp
+ENV VERSION=1.11.1 OS=linux ARCH=amd64
+RUN wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz
+RUN sudo tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
+
+# -- Add docker user
+ARG NB_USER=docker
+COPY example.py /home/$NB_USER/example.py
+
+# -- Set up Singularity 3.0.0
+ENV GOPATH=/home/$NB_USER/go
+ENV PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin
+
+RUN mkdir -p $GOPATH/src/github.com/sylabs
+WORKDIR $GOPATH/src/github.com/sylabs
+RUN git clone https://github.com/sylabs/singularity.git --branch release-3.0
+WORKDIR singularity
+
+RUN go get -u -v github.com/golang/dep/cmd/dep
+
+WORKDIR $GOPATH/src/github.com/sylabs/singularity
+RUN ./mconfig
+RUN make -C builddir
+RUN sudo make -C builddir install
+
+# -- Pull triqs image and run example script
+WORKDIR /home/$NB_USER
+
+RUN singularity pull docker://flatironinstitute/triqs
+CMD mpirun -np 2 singularity exec triqs_latest.sif python kanamori.py
