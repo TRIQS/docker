@@ -1,6 +1,14 @@
-FROM docker_base:latest
+FROM ubuntu:latest
 
-RUN sudo apt-get update && sudo apt-get install -y \
+RUN apt-get update && apt-get install -y \
+      vim \
+      git \
+      tar \
+      wget \
+      make \
+      g++ \
+      sudo \
+      patch \
       build-essential \
       libssl-dev \
       uuid-dev \
@@ -17,7 +25,11 @@ RUN sudo tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
 
 # -- Add docker user
 ARG NB_USER=docker
-COPY example.py /home/$NB_USER/example.py
+ARG NB_UID=1000
+RUN useradd -u $NB_UID -m $NB_USER && \
+    echo 'docker ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+COPY kanamori.py /home/$NB_USER/kanamori.py
+USER $NB_USER
 
 # -- Set up Singularity 3.0.0
 ENV GOPATH=/home/$NB_USER/go
