@@ -13,3 +13,6 @@
 [submodule "cpp2py"]
 	path = cpp2py
 	url = https://github.com/TRIQS/cpp2py
+[submodule "omegamaxent_interface"]
+	path = omegamaxent_interface
+	url = https://github.com/TRIQS/omegamaxent_interface
