@@ -50,7 +50,7 @@ RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $NB_USER
 WORKDIR /home/$NB_USER
-ENV CMAKE_PREFIX_PATH=/usr/share/cmake \
+ENV CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
     CPATH=/usr/include/openmpi:/usr/include/hdf5/serial:$CPATH
 RUN curl -L https://api.github.com/repos/TRIQS/tutorials/tarball/unstable | tar xzf - --one-top-level=tutorials --strip-components=1
 

@@ -12,6 +12,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
       libfftw3-dev \
       libgfortran3 \
       libgmp-dev \
+      libgsl-dev \
       libhdf5-dev \
       liblapack-dev \
       libopenmpi-dev \
@@ -37,13 +38,13 @@ ENV CC=gcc CXX=g++ \
     SRC=/src \
     BUILD=/build \
     INSTALL=/usr \
-    CMAKE_PREFIX_PATH=/usr/share/cmake \
+    CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
     REPO=/build/repo
 
 COPY . $SRC/
 RUN set -ex ; \
   mkdir -p $REPO ; \
-  for pkg in cpp2py triqs dft_tools cthyb ; do \
+  for pkg in cpp2py triqs dft_tools cthyb omegamaxent_interface; do \
     mkdir $BUILD/$pkg ; \
     cd $BUILD/$pkg ; \
     cmake $SRC/$pkg -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
