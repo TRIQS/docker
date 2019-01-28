@@ -46,7 +46,7 @@ ENV CC=gcc-7 CXX=g++-7 \
 COPY . $SRC/
 RUN set -ex ; \
   mkdir -p $REPO ; \
-  for pkg in cpp2py triqs dft_tools cthyb omegamaxent_interface ; do \
+  for pkg in triqs dft_tools cthyb omegamaxent_interface ; do \
     mkdir $BUILD/$pkg ; \
     cd $BUILD/$pkg ; \
     cmake $SRC/$pkg -DBUILD_DEBIAN_PACKAGE=1 -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
