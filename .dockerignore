@@ -1,5 +1,4 @@
 .gitmodules
 README.md
 Dockerfile*
-*/Jenkinsfile
 compiler-explorer
