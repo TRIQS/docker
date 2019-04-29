@@ -14,4 +14,6 @@ The Jupyter notebook will be accessible at [http://localhost:8888](http://localh
 If you want the state of the virtual machine to be stored, drop `--rm` from the commands above.
 A summary of useful docker commands can be found [here](https://www.docker.com/sites/default/files/Docker_CheatSheet_08.09.2016_0.pdf).
 
-A separate [docker build](https://hub.docker.com/r/flatironinstitute/compiler-explorer) provides the [compiler-explorer](https://github.com/mattgodbolt/compiler-explorer) with triqs enabled, running on port 10240.
+## Compiler Explorer
+
+A separate [docker build](compiler-explorer) provides the [compiler-explorer](https://github.com/mattgodbolt/compiler-explorer) with triqs enabled, running on port 10240.
