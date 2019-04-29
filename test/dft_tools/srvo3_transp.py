@@ -1,1 +1,0 @@
-../../dft_tools/test/srvo3_transp.py

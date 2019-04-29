@@ -13,7 +13,3 @@ If you want the state of the virtual machine to be stored, drop `--rm` from the 
 A summary of useful docker commands can be found [here](https://www.docker.com/sites/default/files/Docker_CheatSheet_08.09.2016_0.pdf).
 
 A separate [docker build](https://hub.docker.com/r/flatironinstitute/compiler-explorer) provides the [compiler-explorer](https://github.com/mattgodbolt/compiler-explorer) with triqs enabled, running on port 10240.
-
-## Dependencies
-
-The submodules in this repository point to the latest revision of each module, and are updated automatically at the end of each successful Jenkins run (except for cpp2py which is updated manually).

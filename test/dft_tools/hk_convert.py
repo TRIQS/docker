@@ -1,1 +1,0 @@
-../../dft_tools/test/hk_convert.py
