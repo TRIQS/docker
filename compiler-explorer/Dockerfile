@@ -1,21 +1,27 @@
-FROM flatironinstitute/triqs
+FROM flatironinstitute/triqs:2.1.0
 
 USER root
 
-# add gcc7, node8
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test
-ADD https://deb.nodesource.com/setup_8.x nodesetup.sh
-RUN bash nodesetup.sh && rm nodesetup.sh
-RUN apt-get install -y \
+# Setup Compiler Explorer with various gcc and clang versions
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN sudo apt-get update && \
+    DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --no-install-recommends \
+	nodejs \
+	g++-6 \
 	g++-7 \
-	nodejs
+	g++-8 \
+	clang-6.0 \
+	clang-7 && \
+    sudo apt-get autoremove --purge -y && \
+    sudo apt-get autoclean -y && \
+    sudo rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 EXPOSE 10240
 ADD https://api.github.com/repos/mattgodbolt/compiler-explorer/tarball/master /tmp/compiler-explorer.tar.gz
-RUN chown triqs /tmp/compiler-explorer.tar.gz
-USER triqs
 RUN tar xzf /tmp/compiler-explorer.tar.gz --one-top-level --strip-components=1 && rm /tmp/compiler-explorer.tar.gz
+COPY c++.local.properties compiler-explorer/etc/config
+RUN chown -R triqs compiler-explorer
+USER triqs
 WORKDIR compiler-explorer
 RUN make dist
-COPY c++.local.properties etc/config
-CMD ["make", "run"]
+CMD make EXTRA_ARGS='--language c++'
