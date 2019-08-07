@@ -53,7 +53,7 @@ WORKDIR /home/$NB_USER
 ENV CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
     CPATH=/usr/include/openmpi:/usr/include/hdf5/serial:$CPATH
 RUN curl -L https://api.github.com/repos/TRIQS/tutorials/tarball/unstable | tar xzf - --one-top-level=tutorials --strip-components=1
-WORKDIR /home/$NB_USER/TRIQSTutorialsPython
+WORKDIR /home/$NB_USER/tutorials/TRIQSTutorialsPython
 
 EXPOSE 8888
 CMD ["jupyter","notebook","--ip","0.0.0.0"]
