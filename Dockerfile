@@ -8,6 +8,8 @@ RUN apt-get update && \
       triqs \
       triqs_dft_tools \
       triqs_cthyb \
+      triqs_tprf \
+      triqs_maxent \
       \
       cmake \
       g++ \
