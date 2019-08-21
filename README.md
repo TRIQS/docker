@@ -1,7 +1,7 @@
 # TRIQS Docker Image
 
 This builds the [flatironinstitute/triqs](https://hub.docker.com/r/flatironinstitute/triqs) docker hub image which includes [triqs](https://triqs.github.io/triqs)
-and the applications [cthyb](https://triqs.github.io/cthyb) and [dft_tools](https://triqs.github.io/dft_tools).
+and the applications [cthyb](https://triqs.github.io/cthyb), [dft_tools](https://triqs.github.io/dft_tools), [maxent](https://triqs.github.io/maxent) and [tprf](https://triqs.github.io/tprf)
 
 It can be used to run a Jupyter notebook environment yourself or on [Binder](https://mybinder.org/v2/gh/TRIQS/docker/master), or to run a shell for development:
 
