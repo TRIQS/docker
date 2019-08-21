@@ -1,4 +1,4 @@
-FROM flatironinstitute/triqs:2.1.0
+FROM flatironinstitute/triqs:latest
 
 USER root
 
