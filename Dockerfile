@@ -1,9 +1,9 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 RUN apt-get update && \
     apt-get install -y software-properties-common apt-transport-https curl && \
-    curl -L https://users.flatironinstitute.org/~ccq/triqs/bionic/public.gpg | apt-key add - && \
-    add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs/bionic/ /" -y && \
+    curl -L https://users.flatironinstitute.org/~ccq/triqs3/focal/public.gpg | apt-key add - && \
+    add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs3/focal/ /" -y && \
     apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       triqs \
       triqs_dft_tools \
@@ -19,32 +19,29 @@ RUN apt-get update && \
       libblas-dev \
       libboost-all-dev \
       libfftw3-dev \
-      libgfortran3 \
       libgmp-dev \
       libhdf5-dev \
       liblapack-dev \
       libopenmpi-dev \
-      python-dev \
+      python3-dev \
       \
       clang \
       libclang-dev \
-      python-clang-6.0 \
+      python3-clang \
       \
       libnfft3-dev \
       \
       sudo \
       openssh-client \
-      python-pip \
-      python-setuptools \
-      python-configparser \
-      python-tk \
-      python-backports-shutil-get-terminal-size \
+      python3-pip \
+      python3-setuptools \
+      python3-tk \
       && \
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir notebook==5.* ipython==5.* ipykernel==4.*
+RUN pip3 install --no-cache-dir notebook ipython ipykernel
 
 ARG NB_USER=triqs
 ARG NB_UID=1000
