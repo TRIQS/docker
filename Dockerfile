@@ -17,7 +17,7 @@ RUN apt-get update && \
       git \
       hdf5-tools \
       libblas-dev \
-      libboost-all-dev \
+      libboost-dev \
       libfftw3-dev \
       libgmp-dev \
       libhdf5-dev \
