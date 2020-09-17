@@ -1,8 +1,5 @@
 FROM ubuntu:focal
 ARG LLVM=10
-ARG ARCH=x86-64
-ARG NCORES=40
-ARG BRANCH=unstable
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       clang-${LLVM} \
@@ -47,58 +44,12 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
-ENV SRC=/src \
-    BUILD=/home/build \
-    INSTALL=/usr \
+ARG ARCH=x86-64
+ENV INSTALL=/usr \
     PYTHONPATH=/usr/lib/python3.8/site-packages \
     CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
     PYTHON_VERSION=3.8 \
     CC=clang-${LLVM} CXX=clang++-${LLVM} CXXFLAGS="-stdlib=libc++ -march=${ARCH}"
-
-RUN useradd -d $BUILD -m build
-
-RUN git clone https://github.com/TRIQS/triqs --branch $BRANCH --depth 1 $SRC/triqs
-WORKDIR $BUILD/triqs
-RUN chown build .
-USER build
-RUN cmake $SRC/triqs -DCMAKE_INSTALL_PREFIX=$INSTALL && make -j$NCORES
-USER root
-RUN make install
-
-RUN git clone https://github.com/TRIQS/dft_tools --branch $BRANCH --depth 1 $SRC/dft_tools
-WORKDIR $BUILD/dft_tools
-RUN chown build .
-USER build
-RUN cmake $SRC/dft_tools -DTRIQS_ROOT=$INSTALL && make -j$NCORES
-USER root
-RUN make install
-
-RUN git clone https://github.com/TRIQS/cthyb --branch $BRANCH --depth 1 $SRC/cthyb
-WORKDIR $BUILD/cthyb
-RUN chown build .
-USER build
-RUN cmake $SRC/cthyb -DTRIQS_ROOT=$INSTALL && make -j$NCORES
-USER root
-RUN make install
-
-RUN git clone https://github.com/TRIQS/tprf --branch $BRANCH --depth 1 $SRC/tprf
-WORKDIR $BUILD/tprf
-RUN chown build .
-USER build
-RUN cmake $SRC/tprf -DTRIQS_ROOT=$INSTALL && make -j$NCORES
-USER root
-RUN make install
-
-RUN git clone https://github.com/TRIQS/maxent --branch $BRANCH --depth 1 $SRC/maxent
-WORKDIR $BUILD/maxent
-RUN chown build .
-USER build
-RUN cmake $SRC/maxent -DTRIQS_ROOT=$INSTALL && make -j$NCORES
-USER root
-RUN make install
-
-WORKDIR /
-RUN rm -rf $SRC $BUILD && userdel build
 
 ARG NB_USER=triqs
 ARG NB_UID=1000
@@ -106,6 +57,20 @@ RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $NB_USER
 WORKDIR /home/$NB_USER
+
+ARG NCORES=10
+ARG BRANCH=unstable
+RUN set -ex ; \
+  for pkg in triqs dft_tools cthyb tprf maxent ; do \
+    git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
+    mkdir build ; cd build ; \
+    cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+    make -j$NCORES ; \
+    sudo make install ; \
+    cd .. ; \
+    rm -rf src build ; \
+  done
+
 ENV CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
     CPATH=/usr/include/openmpi:/usr/include/hdf5/serial:$CPATH
 RUN curl -L https://api.github.com/repos/TRIQS/tutorials/tarball/$BRANCH | tar xzf - --one-top-level=tutorials --strip-components=1
