@@ -36,12 +36,11 @@ RUN apt-get update && \
       python3-pip \
       python3-setuptools \
       python3-tk \
+      jupyter-notebook \
       && \
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
-
-RUN pip3 install --no-cache-dir notebook ipython ipykernel
 
 ARG NB_USER=triqs
 ARG NB_UID=1000
