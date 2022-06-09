@@ -1,9 +1,9 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 RUN apt-get update && \
     apt-get install -y software-properties-common apt-transport-https curl && \
-    curl -L https://users.flatironinstitute.org/~ccq/triqs3/focal/public.gpg | apt-key add - && \
-    add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs3/focal/ /" -y && \
+    curl -L https://users.flatironinstitute.org/~ccq/triqs3/jammy/public.gpg | apt-key add - && \
+    add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs3/jammy/ /" -y && \
     apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       triqs \
       triqs_dft_tools \
@@ -42,6 +42,7 @@ RUN apt-get update && \
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
+RUN pip3 install jupyterlab
 ARG NB_USER=triqs
 ARG NB_UID=1000
 RUN useradd -u $NB_UID -m $NB_USER && \
@@ -50,8 +51,8 @@ USER $NB_USER
 WORKDIR /home/$NB_USER
 ENV CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
     CPATH=/usr/include/openmpi:/usr/include/hdf5/serial:$CPATH
-RUN curl -L https://api.github.com/repos/TRIQS/tutorials/tarball/unstable | tar xzf - --one-top-level=tutorials --strip-components=1
-WORKDIR /home/$NB_USER/tutorials/TRIQSTutorialsPython
+RUN git clone https://github.com/triqs/tutorials --branch 3.1.x --depth 1
+WORKDIR /home/$NB_USER/tutorials/
 
 EXPOSE 8888
-CMD ["jupyter","notebook","--ip","0.0.0.0"]
+CMD ["jupyter","lab","--ip","0.0.0.0"]

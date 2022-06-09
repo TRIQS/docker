@@ -1,5 +1,5 @@
-FROM ubuntu:focal
-ARG LLVM=10
+FROM ubuntu:jammy
+ARG LLVM=14
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       clang-${LLVM} \
@@ -15,14 +15,14 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
       libc++-${LLVM}-dev \
       libc++abi-${LLVM}-dev \
       libomp-${LLVM}-dev \
-      libgfortran4 \
-      libgmp-dev \
-      libboost-dev \
-      libhdf5-dev \
+      libgfortran5 \
       libblas-dev \
+      libboost-dev \
+      libfftw3-dev \
+      libgmp-dev \
+      libhdf5-dev \
       liblapack-dev \
       libopenmpi-dev \
-      libfftw3-dev \
       libnfft3-dev \
       openmpi-bin \
       openmpi-common \
@@ -34,6 +34,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
       python3-mpi4py \
       python3-numpy \
       python3-scipy \
+      python3-pip \
       jupyter-notebook \
       \
       sudo \
@@ -44,11 +45,12 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
+RUN pip3 install jupyterlab
 ARG ARCH=x86-64
 ENV INSTALL=/usr \
-    PYTHONPATH=/usr/lib/python3.8/site-packages \
+    PYTHONPATH=/usr/lib/python3.10/site-packages \
     CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
-    PYTHON_VERSION=3.8 \
+    PYTHON_VERSION=3.10 \
     CC=clang-${LLVM} CXX=clang++-${LLVM} CXXFLAGS="-stdlib=libc++ -march=${ARCH}"
 
 ARG NB_USER=triqs
@@ -73,8 +75,8 @@ RUN set -ex ; \
 
 ENV CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
     CPATH=/usr/include/openmpi:/usr/include/hdf5/serial:$CPATH
-RUN curl -L https://api.github.com/repos/TRIQS/tutorials/tarball/$BRANCH | tar xzf - --one-top-level=tutorials --strip-components=1
-WORKDIR /home/$NB_USER/tutorials/TRIQSTutorialsPython
+RUN git clone https://github.com/triqs/tutorials --branch unstable --depth 1
+WORKDIR /home/$NB_USER/tutorials/
 
 EXPOSE 8888
-CMD ["jupyter","notebook","--ip","0.0.0.0"]
+CMD ["jupyter","lab","--ip","0.0.0.0"]
