@@ -11,6 +11,8 @@ RUN apt-get update && \
       triqs_tprf \
       triqs_maxent \
       \
+      clang \
+      make \
       cmake \
       g++ \
       gfortran \
@@ -23,34 +25,33 @@ RUN apt-get update && \
       libhdf5-dev \
       liblapack-dev \
       libopenmpi-dev \
-      python3-dev \
+      libnfft3-dev \
       \
-      clang \
       libclang-dev \
       python3-clang \
-      \
-      libnfft3-dev \
+      python3-dev \
+      python3-setuptools \
+      python3-tk \
+      python3-pip \
+      jupyter-notebook \
       \
       sudo \
       openssh-client \
-      python3-pip \
-      python3-setuptools \
-      python3-tk \
-      jupyter-notebook \
       && \
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 RUN pip3 install jupyterlab
+ENV CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH
+
 ARG NB_USER=triqs
 ARG NB_UID=1000
 RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $NB_USER
 WORKDIR /home/$NB_USER
-ENV CMAKE_PREFIX_PATH=/usr/lib/cmake/triqs \
-    CPATH=/usr/include/openmpi:/usr/include/hdf5/serial:$CPATH
+
 RUN git clone https://github.com/triqs/tutorials --branch 3.1.x --depth 1
 WORKDIR /home/$NB_USER/tutorials/
 
