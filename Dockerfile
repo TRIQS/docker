@@ -30,9 +30,11 @@ RUN apt-get update && \
       libclang-dev \
       python3-clang \
       python3-dev \
+      python3-pytest \
+      python3-skimage \
+      python3-pip \
       python3-setuptools \
       python3-tk \
-      python3-pip \
       jupyter-notebook \
       \
       sudo \
@@ -43,7 +45,8 @@ RUN apt-get update && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 RUN pip3 install jupyterlab
-ENV CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH
+ENV CXX=g++ \
+    CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH
 
 ARG NB_USER=triqs
 ARG NB_UID=1000
@@ -51,6 +54,17 @@ RUN useradd -u $NB_UID -m $NB_USER && \
     echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER $NB_USER
 WORKDIR /home/$NB_USER
+
+RUN set -ex ; \
+  for pkg in TRIQS/hubbardI flatironinstitute/solid_dmft ; do \
+    git clone https://github.com/$pkg --depth 1 src ; \
+    mkdir build ; cd build ; \
+    cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+    make -j$NCORES ; \
+    sudo make install ; \
+    cd .. ; \
+    rm -rf src build ; \
+  done
 
 RUN git clone https://github.com/triqs/tutorials --branch 3.1.x --depth 1
 WORKDIR /home/$NB_USER/tutorials/
