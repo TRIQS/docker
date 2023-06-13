@@ -1,7 +1,9 @@
 FROM ubuntu:jammy
-ARG LLVM=13
+ARG LLVM=16
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y lsb-release wget software-properties-common && \
+      wget -O /tmp/llvm.sh https://apt.llvm.org/llvm.sh && chmod +x /tmp/llvm.sh && /tmp/llvm.sh ${LLVM} && \
+      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       clang-${LLVM} \
       make \
       cmake \
