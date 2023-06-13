@@ -50,7 +50,7 @@ RUN apt-get update && apt-get install -y lsb-release wget software-properties-co
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 RUN pip3 install jupyterlab
-ARG ARCH=x86-64
+ARG ARCH=native
 ENV INSTALL=/usr \
     PYTHON_VERSION=3.10 \
     CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH \
