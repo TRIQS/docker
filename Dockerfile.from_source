@@ -66,8 +66,8 @@ WORKDIR /home/$NB_USER
 ARG NCORES=10
 ARG BRANCH=unstable
 RUN set -ex ; \
-  for pkg in TRIQS/triqs TRIQS/dft_tools TRIQS/cthyb TRIQS/tprf TRIQS/maxent TRIQS/hubbardI flatironinstitute/solid_dmft ; do \
-    git clone https://github.com/$pkg --branch $BRANCH --depth 1 src ; \
+  for pkg in triqs dft_tools cthyb tprf maxent hubbardI hartree_fock solid_dmft ; do \
+    git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
     mkdir build ; cd build ; \
     cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
     make -j$NCORES ; \

@@ -56,8 +56,8 @@ USER $NB_USER
 WORKDIR /home/$NB_USER
 
 RUN set -ex ; \
-  for pkg in TRIQS/hubbardI flatironinstitute/solid_dmft ; do \
-    git clone https://github.com/$pkg --depth 1 src ; \
+  for pkg in hubbardI solid_dmft ; do \
+    git clone https://github.com/TRIQS/$pkg --depth 1 src ; \
     mkdir build ; cd build ; \
     cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
     make -j$NCORES ; \
