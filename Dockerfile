@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:22.04
 
 RUN apt-get update && \
     apt-get install -y software-properties-common apt-transport-https curl && \
@@ -17,6 +17,9 @@ RUN apt-get update && \
       g++ \
       gfortran \
       git \
+      htop \
+      nano \
+      vim \
       hdf5-tools \
       libblas-dev \
       libboost-dev \
@@ -45,6 +48,7 @@ RUN apt-get update && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 RUN pip3 install jupyterlab
+RUN ln -s /usr/bin/python3 /usr/bin/python
 ENV CXX=g++ \
     CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH
 
