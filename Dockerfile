@@ -1,8 +1,8 @@
-FROM ubuntu:22.04
+FROM --platform=linux/amd64 ubuntu:22.04
 
 RUN apt-get update && \
     apt-get install -y software-properties-common apt-transport-https curl && \
-    curl -L https://users.flatironinstitute.org/~ccq/triqs3/jammy/public.gpg | apt-key add - && \
+    curl -L https://users.flatironinstitute.org/~ccq/triqs3/jammy/public.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/triqs.gpg && \
     add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs3/jammy/ /" -y && \
     apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       triqs \
@@ -11,10 +11,9 @@ RUN apt-get update && \
       triqs_tprf \
       triqs_maxent \
       \
-      clang \
       make \
       cmake \
-      g++ \
+      g++-12 \
       gfortran \
       git \
       htop \
@@ -49,7 +48,7 @@ RUN apt-get update && \
 
 RUN pip3 install jupyterlab
 RUN ln -s /usr/bin/python3 /usr/bin/python
-ENV CXX=g++ \
+ENV CC=gcc-12 CXX=g++-12 \
     CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH
 
 ARG NB_USER=triqs
