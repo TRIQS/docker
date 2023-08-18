@@ -19,6 +19,7 @@ RUN apt-get update && \
       htop \
       nano \
       vim \
+      less \
       hdf5-tools \
       libblas-dev \
       libboost-dev \
