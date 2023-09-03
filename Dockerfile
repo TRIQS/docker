@@ -12,6 +12,7 @@ RUN apt-get update && \
       triqs_maxent \
       triqs_hubbardi \
       triqs_hartree_fock \
+      solid_dmft \
       \
       make \
       cmake \
@@ -27,6 +28,7 @@ RUN apt-get update && \
       libboost-dev \
       libfftw3-dev \
       libgmp-dev \
+      libmpfr-dev \
       libhdf5-dev \
       liblapack-dev \
       libopenmpi-dev \
@@ -40,7 +42,6 @@ RUN apt-get update && \
       python3-pytest \
       python3-setuptools \
       python3-skimage \
-      python3-pandas \
       python3-tk \
       jupyter-notebook \
       \
@@ -68,7 +69,7 @@ WORKDIR /home/$NB_USER
 ARG NCORES=10
 ARG BRANCH=3.2.x
 RUN set -ex ; \
-  for pkg in solid_dmft ; do \
+  for pkg in Nevanlinna ; do \
     git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
     mkdir build ; cd build ; \
     cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
