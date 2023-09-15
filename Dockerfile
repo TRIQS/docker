@@ -12,6 +12,7 @@ RUN apt-get update && \
       triqs_maxent \
       triqs_hubbardi \
       triqs_hartree_fock \
+      triqs_nevanlinna \
       solid_dmft \
       \
       make \
@@ -26,6 +27,7 @@ RUN apt-get update && \
       hdf5-tools \
       libblas-dev \
       libboost-dev \
+      libeigen3-dev \
       libfftw3-dev \
       libgmp-dev \
       libmpfr-dev \
@@ -66,18 +68,18 @@ RUN useradd -u $NB_UID -m $NB_USER && \
 USER $NB_USER
 WORKDIR /home/$NB_USER
 
-ARG NCORES=10
-ARG BRANCH=3.2.x
-RUN set -ex ; \
-  for pkg in Nevanlinna ; do \
-    git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
-    mkdir build ; cd build ; \
-    cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
-    make -j$NCORES ; \
-    sudo make install ; \
-    cd .. ; \
-    rm -rf src build ; \
-  done
+#ARG NCORES=10
+#ARG BRANCH=3.2.x
+#RUN set -ex ; \
+  #for pkg in ... ; do \
+    #git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
+    #mkdir build ; cd build ; \
+    #cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+    #make -j$NCORES ; \
+    #sudo make install ; \
+    #cd .. ; \
+    #rm -rf src build ; \
+  #done
 
 RUN git clone https://github.com/triqs/tutorials --branch 3.2.x --depth 1
 WORKDIR /home/$NB_USER/tutorials/
