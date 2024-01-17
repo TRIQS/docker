@@ -1,4 +1,5 @@
 FROM --platform=linux/amd64 ubuntu:22.04
+LABEL org.opencontainers.image.source=https://github.com/triqs/triqs
 
 RUN apt-get update && \
     apt-get install -y software-properties-common apt-transport-https curl && \
