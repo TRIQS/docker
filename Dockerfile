@@ -1,10 +1,10 @@
-FROM --platform=linux/amd64 ubuntu:22.04
+FROM --platform=linux/amd64 ubuntu:24.04
 LABEL org.opencontainers.image.source=https://github.com/triqs/triqs
 
 RUN apt-get update && \
     apt-get install -y software-properties-common apt-transport-https curl && \
-    curl -L https://users.flatironinstitute.org/~ccq/triqs3/jammy/public.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/triqs.gpg && \
-    add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs3/jammy/ /" -y && \
+    curl -L https://users.flatironinstitute.org/~ccq/triqs3/noble/public.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/triqs.gpg && \
+    add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs3/noble/ /" -y && \
     apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       triqs \
       triqs_dft_tools \
@@ -18,7 +18,7 @@ RUN apt-get update && \
       \
       make \
       cmake \
-      g++-12 \
+      g++ \
       gfortran \
       git \
       htop \
@@ -26,14 +26,14 @@ RUN apt-get update && \
       vim \
       less \
       hdf5-tools \
-      libblas-dev \
+      \
       libboost-dev \
       libeigen3-dev \
       libfftw3-dev \
       libgmp-dev \
       libmpfr-dev \
       libhdf5-dev \
-      liblapack-dev \
+      libmkl-dev \
       libopenmpi-dev \
       libnfft3-dev \
       \
@@ -46,6 +46,7 @@ RUN apt-get update && \
       python3-setuptools \
       python3-skimage \
       python3-tk \
+      python3-tomli \
       jupyter-notebook \
       \
       sudo \
@@ -55,19 +56,21 @@ RUN apt-get update && \
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
-RUN pip3 install jupyterlab jupyter-archive
 RUN ln -s /usr/bin/python3 /usr/bin/python
-ENV CC=gcc-12 CXX=g++-12 \
+ENV CC=gcc CXX=g++ \
     CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH
 
 ARG NB_USER=triqs
-ARG NB_UID=1000
+ARG NB_UID=983
 ENV USER ${NB_USER}
 ENV NB_UID ${NB_UID}
 RUN useradd -u $NB_UID -m $NB_USER && \
     echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER $NB_USER
 WORKDIR /home/$NB_USER
+
+RUN pip3 install --user jupyterlab jupyter-archive --break-system-packages
+ENV PATH=/home/$NB_USER/.local/bin:$PATH
 
 #ARG NCORES=10
 #ARG BRANCH=3.2.x
@@ -86,4 +89,4 @@ RUN git clone https://github.com/triqs/tutorials --branch 3.2.x --depth 1
 WORKDIR /home/$NB_USER/tutorials/
 
 EXPOSE 8888
-CMD ["jupyter","lab","--ip","0.0.0.0"]
+CMD ["jupyter","lab","--ip","0.0.0.0", "--no-browser"]

@@ -1,45 +1,48 @@
-FROM ubuntu:22.04
-ARG LLVM=16
+FROM --platform=linux/amd64 ubuntu:24.04
 
-RUN apt-get update && apt-get install -y lsb-release wget software-properties-common && \
-      wget -O /tmp/llvm.sh https://apt.llvm.org/llvm.sh && chmod +x /tmp/llvm.sh && /tmp/llvm.sh ${LLVM} && \
-      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      clang-${LLVM} \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      clang \
       make \
       cmake \
       g++ \
       gfortran \
       git \
+      htop \
+      nano \
       vim \
-      lldb-${LLVM} \
+      less \
+      lldb \
       hdf5-tools \
-      libblas-dev \
+      \
       libboost-dev \
+      libeigen3-dev \
       libfftw3-dev \
       libgmp-dev \
+      libmpfr-dev \
       libhdf5-dev \
-      liblapack-dev \
+      libmkl-dev \
       libopenmpi-dev \
       libnfft3-dev \
       libgfortran5 \
-      openmpi-bin \
-      openmpi-common \
-      openmpi-doc \
-      libc++-${LLVM}-dev \
-      libc++abi-${LLVM}-dev \
-      libomp-${LLVM}-dev \
-      libclang-${LLVM}-dev \
-      python3-clang-${LLVM} \
+      \
+      libc++-dev \
+      libc++abi-dev \
+      libomp-dev \
+      \
+      libclang-dev \
+      python3-clang \
       python3-dev \
       python3-mako \
       python3-matplotlib \
       python3-mpi4py \
       python3-numpy \
+      python3-pip \
       python3-pytest \
       python3-scipy \
-      python3-skimage \
-      python3-pip \
       python3-setuptools \
+      python3-skimage \
+      python3-tk \
+      python3-tomli \
       jupyter-notebook \
       \
       sudo \
@@ -50,24 +53,27 @@ RUN apt-get update && apt-get install -y lsb-release wget software-properties-co
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
-RUN pip3 install jupyterlab
 ARG ARCH=native
 ENV INSTALL=/usr \
-    PYTHON_VERSION=3.10 \
-    CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH \
-    CC=clang-${LLVM} CXX=clang++-${LLVM} CXXFLAGS="-stdlib=libc++ -march=${ARCH}"
+    CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:/usr/include/mkl:$CPLUS_INCLUDE_PATH \
+    CC=clang CXX=clang++ CXXFLAGS="-stdlib=libc++ -march=${ARCH}"
 
 ARG NB_USER=triqs
-ARG NB_UID=1000
+ARG NB_UID=983
+ENV USER ${NB_USER}
+ENV NB_UID ${NB_UID}
 RUN useradd -u $NB_UID -m $NB_USER && \
-    echo 'triqs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+    echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER $NB_USER
 WORKDIR /home/$NB_USER
+
+RUN pip3 install --user jupyterlab jupyter-archive --break-system-packages
+ENV PATH=/home/$NB_USER/.local/bin:$PATH
 
 ARG NCORES=10
 ARG BRANCH=unstable
 RUN set -ex ; \
-  for pkg in triqs dft_tools cthyb tprf maxent hubbardI hartree_fock solid_dmft ; do \
+  for pkg in triqs dft_tools cthyb tprf maxent hubbardI hartree_fock nevanlinna solid_dmft ; do \
     git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
     mkdir build ; cd build ; \
     cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
@@ -81,4 +87,4 @@ RUN git clone https://github.com/triqs/tutorials --branch unstable --depth 1
 WORKDIR /home/$NB_USER/tutorials/
 
 EXPOSE 8888
-CMD ["jupyter","lab","--ip","0.0.0.0"]
+CMD ["jupyter","lab","--ip","0.0.0.0", "--no-browser"]
