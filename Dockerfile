@@ -85,7 +85,7 @@ ENV PATH=/home/$NB_USER/.local/bin:$PATH
     #rm -rf src build ; \
   #done
 
-RUN git clone https://github.com/triqs/tutorials --branch 3.2.x --depth 1
+RUN git clone https://github.com/triqs/tutorials --branch 3.3.x --depth 1
 WORKDIR /home/$NB_USER/tutorials/
 
 EXPOSE 8888
