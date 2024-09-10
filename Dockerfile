@@ -33,7 +33,7 @@ RUN apt-get update && \
       libgmp-dev \
       libmpfr-dev \
       libhdf5-dev \
-      libmkl-dev \
+      libopenblas-dev \
       libopenmpi-dev \
       libnfft3-dev \
       \
