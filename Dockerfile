@@ -9,6 +9,7 @@ RUN apt-get update && \
       triqs \
       triqs_dft_tools \
       triqs_cthyb \
+      triqs_ctseg \
       triqs_tprf \
       triqs_maxent \
       triqs_hubbardi \

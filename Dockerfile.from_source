@@ -74,7 +74,7 @@ ENV PATH=/home/$NB_USER/.local/bin:$PATH
 ARG NCORES=10
 ARG BRANCH=unstable
 RUN set -ex ; \
-  for pkg in triqs dft_tools cthyb tprf maxent hubbardI hartree_fock nevanlinna solid_dmft ; do \
+  for pkg in triqs dft_tools cthyb ctseg tprf maxent hubbardI hartree_fock nevanlinna solid_dmft ; do \
     git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
     mkdir build ; cd build ; \
     cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
