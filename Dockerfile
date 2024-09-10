@@ -73,7 +73,7 @@ RUN pip3 install --user jupyterlab jupyter-archive --break-system-packages
 ENV PATH=/home/$NB_USER/.local/bin:$PATH
 
 #ARG NCORES=10
-#ARG BRANCH=3.2.x
+#ARG BRANCH=3.3.x
 #RUN set -ex ; \
   #for pkg in ... ; do \
     #git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
