@@ -81,7 +81,22 @@ ENV SRC=/tmp/src BUILD=/tmp/build INSTALL=/usr \
 
 USER root
 RUN set -ex ; \
-  for pkg in triqs cthyb ctseg ctint tprf maxent hubbardI hartree_fock dft_tools solid_dmft ; do \
+  mkdir $BUILD ; cd $BUILD ; \
+  git clone https://github.com/flatironinstitute/clair --branch unstable --depth 1 $SRC ; \
+  CXXFLAGS="" cmake $SRC -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+  make -j$NCORES ; \
+  make install ; \
+  rm -rf $SRC $BUILD ;
+RUN set -ex ; \
+  mkdir $BUILD ; cd $BUILD ; \
+  git clone https://github.com/TRIQS/triqs --branch modest_updates --depth 1 $SRC ; \
+  cmake $SRC -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+  make -j$NCORES ; \
+  make install ; \
+  rm -rf $SRC $BUILD ;
+ARG BRANCH=unstable
+RUN set -ex ; \
+  for pkg in cthyb ctseg ctint tprf maxent hubbardI hartree_fock dft_tools solid_dmft ; do \
     mkdir $BUILD ; cd $BUILD ; \
     git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 $SRC ; \
     cmake $SRC -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
@@ -91,15 +106,17 @@ RUN set -ex ; \
   done
 RUN set -ex ; \
   mkdir $BUILD ; cd $BUILD ; \
-  git clone https://github.com/flatironinstitute/clair --branch unstable --depth 1 $SRC ; \
-  CXXFLAGS="" cmake $SRC -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+  git clone https://github.com/TRIQS/modest --branch $BRANCH --depth 1 $SRC ; \
+  cmake $SRC -DCMAKE_INSTALL_PREFIX=$INSTALL -DUpdate_Python_Bindings=ON ; \
   make -j$NCORES ; \
   make install ; \
   rm -rf $SRC $BUILD ;
 
-USER ${NB_USER}
-RUN git clone https://github.com/triqs/tutorials --branch unstable --depth 1 /home/${NB_USER}/tutorials
-WORKDIR /home/${NB_USER}/tutorials/
+RUN echo "localhost slots=2" >> /etc/openmpi/openmpi-default-hostfile
+ENV OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1
 
+USER ${NB_USER}
+COPY --chown=${NB_USER} setup.sh /
 EXPOSE 8888
-CMD ["jupyter","lab","--ip","0.0.0.0", "--no-browser"]
+ENTRYPOINT ["/setup.sh"]

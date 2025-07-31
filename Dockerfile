@@ -27,7 +27,9 @@ RUN apt-get update && \
       vim \
       less \
       hdf5-tools \
+      openssh-client \
       \
+      libclang-dev \
       libboost-dev \
       libeigen3-dev \
       libfftw3-dev \
@@ -37,57 +39,63 @@ RUN apt-get update && \
       libopenblas-dev \
       libopenmpi-dev \
       libnfft3-dev \
+      openmpi-bin \
+      openmpi-common \
+      openmpi-doc \
       \
-      libclang-dev \
       python3-clang \
       python3-dev \
+      python3-ipython \
+      python3-mako \
+      python3-matplotlib \
+      python3-mpi4py \
+      python3-numpy \
       python3-pandas \
-      python3-pip \
       python3-pytest \
+      python3-scipy \
       python3-setuptools \
       python3-skimage \
       python3-tk \
       python3-tomli \
+      python3-venv \
       jupyter-notebook \
-      \
-      sudo \
-      openssh-client \
       && \
     apt-get autoremove --purge -y && \
     apt-get autoclean -y && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
-ENV CC=gcc CXX=g++ \
-    CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH
 
 ARG NB_USER=triqs
-ARG NB_UID=983
-ENV USER ${NB_USER}
-ENV NB_UID ${NB_UID}
-RUN useradd -u $NB_UID -m $NB_USER && \
-    echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-USER $NB_USER
-WORKDIR /home/$NB_USER
+ARG NB_UID=1010
+RUN useradd -u ${NB_UID} -m ${NB_USER} -o
 
-RUN pip3 install --user jupyterlab jupyter-archive --break-system-packages
-ENV PATH=/home/$NB_USER/.local/bin:$PATH
+USER ${NB_USER}
+RUN python3 -m venv --system-site-packages /home/${NB_USER}/.venv
+ENV VIRTUAL_ENV=/home/${NB_USER}/.venv \
+    PATH=/home/${NB_USER}/.venv/bin:$PATH
+RUN pip install jupyterlab jupyterhub jupyter-archive
 
-#ARG NCORES=10
 #ARG BRANCH=3.3.x
+#ARG NCORES=10
+#ARG ARCH=native
+#ENV SRC=/tmp/src BUILD=/tmp/build INSTALL=/usr \
+#    CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/openmpi:/#usr/include/hdf5/serial:$CPLUS_INCLUDE_PATH \
+#    CC=gcc CXX=g++ CXXFLAGS="-march=${ARCH}"
+#USER root
 #RUN set -ex ; \
   #for pkg in ... ; do \
-    #git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 src ; \
-    #mkdir build ; cd build ; \
-    #cmake ../src -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
+    #mkdir $BUILD ; cd $BUILD ; \
+    #git clone https://github.com/TRIQS/$pkg --branch $BRANCH --depth 1 $SRC ; \
+    #cmake $SRC -DCMAKE_INSTALL_PREFIX=$INSTALL ; \
     #make -j$NCORES ; \
-    #sudo make install ; \
-    #cd .. ; \
-    #rm -rf src build ; \
+    #make install ; \
+    #rm -rf $SRC $BUILD ; \
   #done
 
-RUN git clone https://github.com/triqs/tutorials --branch 3.3.x --depth 1
-WORKDIR /home/$NB_USER/tutorials/
+USER ${NB_USER}
+RUN git clone https://github.com/triqs/tutorials --branch 3.3.x --depth 1 /home/${NB_USER}/tutorials
+WORKDIR /home/${NB_USER}/tutorials/
 
 EXPOSE 8888
 CMD ["jupyter","lab","--ip","0.0.0.0", "--no-browser"]
